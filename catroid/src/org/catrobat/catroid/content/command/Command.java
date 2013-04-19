@@ -47,6 +47,9 @@ public abstract class Command {
 
 		public void storeCommand(Command c) {
 			cleanExpiredCommand();
+			if (c.isNeedMemento()) {
+
+			}
 		}
 
 		public Command getTopStack() {
@@ -84,6 +87,8 @@ public abstract class Command {
 		Command.storeCommand(this);
 		execute();
 	}
+
+	protected abstract boolean isNeedMemento();
 
 	protected abstract void execute();
 
