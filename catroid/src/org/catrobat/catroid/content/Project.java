@@ -30,6 +30,7 @@ import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.common.MessageContainer;
 import org.catrobat.catroid.common.Values;
+import org.catrobat.catroid.content.command.CommandManager;
 import org.catrobat.catroid.formulaeditor.UserVariablesContainer;
 import org.catrobat.catroid.utils.Utils;
 
@@ -49,6 +50,7 @@ public class Project implements Serializable {
 	private List<Sprite> spriteList = new ArrayList<Sprite>();
 	@XStreamAlias("variables")
 	private UserVariablesContainer userVariables = null;
+	private transient CommandManager commandManager;
 
 	public Project(Context context, String name) {
 		xmlHeader.setProgramName(name);

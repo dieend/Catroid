@@ -22,29 +22,68 @@
  */
 package org.catrobat.catroid.content.command;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author adinata
  * 
  */
-public abstract class Command {
+public class CommandManager {
+	private List<Command> history;
+	private int currentCommand;
+	private List<Object> memento;
 
-	protected abstract boolean isNeedMemento();
-
-	protected Object getMemento() {
-		assert isNeedMemento() == false;
-		return null;
+	public CommandManager() {
+		history = new ArrayList<Command>();
+		currentCommand = -1;
+		memento = new ArrayList<Object>();
 	}
 
-	protected void setMemento(Object o) {
+	public boolean isRedoable() {
+		return currentCommand + 1 < history.size();
+	}
+
+	public boolean isUndoable() {
+		return currentCommand >= 0;
+	}
+
+	public final void executeCommand(Command c) {
+		storeCommand(c);
+		c.execute();
 
 	}
 
-	protected abstract void execute();
-
-	protected abstract void unexecute();
-
-	protected void unexecute(Object memento) {
-		setMemento(memento);
-		unexecute();
+	private Command getTopStack() {
+		Command ret = history.get(currentCommand);
+		currentCommand--;
+		return ret;
 	}
+
+	public void undo() {
+		assert currentCommand > 0;
+		Command c = getTopStack();
+		c.unexecute();
+	}
+
+	public void redo() {
+		assert currentCommand + 1 < history.size();
+		currentCommand += 1;
+		history.get(currentCommand).execute();
+	}
+
+	private void cleanExpiredCommand() {
+
+	}
+
+	protected void storeCommand(Command c) {
+		if (c.isNeedMemento()) {
+		} else {
+			memento.add(null);
+		}
+		currentCommand += 1;
+		history.add(currentCommand, c);
+		cleanExpiredCommand();
+	}
+
 }
