@@ -68,6 +68,7 @@ public class Project implements Serializable {
 		MessageContainer.clear();
 
 		userVariables = new UserVariablesContainer();
+		commandManager = new CommandManager();
 
 		if (context == null) {
 			return;
@@ -127,6 +128,10 @@ public class Project implements Serializable {
 
 	public XmlHeader getXmlHeader() {
 		return this.xmlHeader;
+	}
+
+	public CommandManager getCommandManager() {
+		return this.commandManager;
 	}
 
 	// this method should be removed by the nex refactoring
