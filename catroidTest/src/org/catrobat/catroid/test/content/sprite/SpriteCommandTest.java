@@ -18,26 +18,54 @@ import org.catrobat.catroid.content.bricks.SetLookBrick;
 import org.catrobat.catroid.content.bricks.SetSizeToBrick;
 import org.catrobat.catroid.content.bricks.ShowBrick;
 import org.catrobat.catroid.content.command.AddScriptCommand;
+import org.catrobat.catroid.content.command.CommandManager;
 import org.catrobat.catroid.io.StorageHandler;
 import org.catrobat.catroid.test.utils.TestUtils;
 import org.catrobat.catroid.utils.Utils;
-import org.junit.Test;
 
 import android.test.InstrumentationTestCase;
 
 public class SpriteCommandTest extends InstrumentationTestCase {
 	private Script testScript;
 	private Script otherScript;
+	private String projectNameOne = "Ulumulu";
 
-	@Test
-	public void testAddCommandScript() {
-		Sprite currentSprite = ProjectManager.getInstance().getCurrentProject().getSpriteList().get(0);
-		assertEquals("Script choosen not cat sprite", currentSprite.getName(), "cat");
+	@Override
+	public void tearDown() throws Exception {
+		TestUtils.clearProject(projectNameOne);
+		TestUtils.clearProject("oldProject");
+		TestUtils.clearProject("newProject");
+		super.tearDown();
+	}
+
+	public void testAddCommandScript() throws IOException {
+		createTestProject("project name");
+		CommandManager cm = ProjectManager.getInstance().getCurrentProject().getCommandManager();
+
+		Sprite currentSprite = ProjectManager.getInstance().getCurrentProject().getSpriteList().get(1);
+		assertEquals("Script choosen not cat sprite", "cat", currentSprite.getName());
+		assertEquals("Number of existing script not 1", 1, currentSprite.getNumberOfScripts());
+		Script testedScript = currentSprite.getScript(0);
+
 		int position = 0;
 		ScriptBrick scriptBrick = new BroadcastReceiverBrick();
-		ProjectManager.getInstance().getCurrentProject().getCommandManager()
-				.executeCommand(new AddScriptCommand(currentSprite, scriptBrick, position));
-		assertEquals("Script ", currentSprite.getNumberOfScripts(), 2);
+		cm.executeCommand(new AddScriptCommand(currentSprite, scriptBrick, position));
+
+		assertEquals("Added new script command not working", 2, currentSprite.getNumberOfScripts());
+		Script addedScript = currentSprite.getScript(0);
+
+		assertNotSame("Added new script added in wrong position", addedScript, testedScript);
+
+		assertTrue("Not able to undo after executing command", cm.isUndoable());
+		cm.undo();
+		assertEquals("Undo adding new script command not working", 1, currentSprite.getNumberOfScripts());
+		assertEquals("Wrong undo action happened", testedScript, currentSprite.getScript(0));
+
+		assertTrue("Not able to redo after undoing command", cm.isRedoable());
+		cm.redo();
+		assertEquals("Redo adding new script command not working", 2, currentSprite.getNumberOfScripts());
+		assertEquals("Wrong redo action happened", addedScript, currentSprite.getScript(0));
+
 	}
 
 	public Project createTestProject(String projectName) throws IOException {

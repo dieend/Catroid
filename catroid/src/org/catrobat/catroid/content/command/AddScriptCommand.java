@@ -22,7 +22,11 @@
  */
 package org.catrobat.catroid.content.command;
 
+import java.util.List;
+
+import org.catrobat.catroid.content.Script;
 import org.catrobat.catroid.content.Sprite;
+import org.catrobat.catroid.content.bricks.Brick;
 import org.catrobat.catroid.content.bricks.ScriptBrick;
 
 /**
@@ -30,12 +34,12 @@ import org.catrobat.catroid.content.bricks.ScriptBrick;
  * 
  */
 public class AddScriptCommand extends Command {
-	private Sprite currentSprite;
+	private Sprite targetSprite;
 	private ScriptBrick scriptBrick;
 	private int position;
 
 	public AddScriptCommand(Sprite currentSprite, ScriptBrick scriptBrick, int position) {
-		this.currentSprite = currentSprite;
+		this.targetSprite = currentSprite;
 		this.scriptBrick = scriptBrick;
 		this.position = position;
 	}
@@ -57,7 +61,31 @@ public class AddScriptCommand extends Command {
 	 */
 	@Override
 	protected void execute() {
-		// TODO Auto-generated method stub
+		Sprite currentSprite = targetSprite;
+
+		int[] temp = getScriptAndBrickIndexFromProject(position);
+
+		int scriptPosition = temp[0];
+		int brickPosition = temp[1];
+
+		Script newScript = scriptBrick.initScript(currentSprite);
+		if (currentSprite.getNumberOfBricks() > 0) {
+			int addScriptTo = position == 0 ? 0 : scriptPosition + 1;
+			currentSprite.addScript(addScriptTo, newScript);
+		} else {
+			currentSprite.addScript(newScript);
+		}
+
+		Script previousScript = currentSprite.getScript(scriptPosition);
+		if (previousScript != null) {
+			Brick brick;
+			int size = previousScript.getBrickList().size();
+			for (int i = brickPosition; i < size; i++) {
+				brick = previousScript.getBrick(brickPosition);
+				previousScript.removeBrick(brick);
+				newScript.addBrick(brick);
+			}
+		}
 
 	}
 
@@ -72,4 +100,57 @@ public class AddScriptCommand extends Command {
 
 	}
 
+	private int[] getScriptAndBrickIndexFromProject(int position) {
+		int bricklistsize = targetSprite.getNumberOfBricks();
+		int[] returnValue = new int[2];
+
+		if (position >= bricklistsize) {
+
+			returnValue[0] = targetSprite.getNumberOfScripts() - 1;
+			if (returnValue[0] < 0) {
+				returnValue[0] = 0;
+				returnValue[1] = 0;
+			} else {
+				Script script = targetSprite.getScript(returnValue[0]);
+				if (script != null) {
+					returnValue[1] = script.getBrickList().size();
+				} else {
+					returnValue[1] = 0;
+				}
+			}
+
+			return returnValue;
+		}
+
+		int scriptPosition = 0;
+		int scriptOffset;
+		for (scriptOffset = 0; scriptOffset < position;) {
+			scriptOffset += targetSprite.getScript(scriptPosition).getBrickList().size() + 1;
+			if (scriptOffset < position) {
+				scriptPosition++;
+			}
+		}
+		scriptOffset -= targetSprite.getScript(scriptPosition).getBrickList().size();
+
+		returnValue[0] = scriptPosition;
+		List<Brick> brickListFromProject = targetSprite.getScript(scriptPosition).getBrickList();
+		int brickPosition = position;
+		if (scriptOffset > 0) {
+			brickPosition -= scriptOffset;
+		}
+
+		Brick brickFromProject;
+		if (brickListFromProject.size() != 0 && brickPosition < brickListFromProject.size()) {
+			brickFromProject = brickListFromProject.get(brickPosition);
+		} else {
+			brickFromProject = null;
+		}
+
+		returnValue[1] = targetSprite.getScript(scriptPosition).getBrickList().indexOf(brickFromProject);
+		if (returnValue[1] < 0) {
+			returnValue[1] = targetSprite.getScript(scriptPosition).getBrickList().size();
+		}
+
+		return returnValue;
+	}
 }
