@@ -27,8 +27,8 @@ import java.util.List;
 import org.catrobat.catroid.content.Script;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.content.bricks.Brick;
-import org.catrobat.catroid.content.bricks.NestingBrick;
 import org.catrobat.catroid.content.bricks.ScriptBrick;
+import org.catrobat.catroid.ui.ScriptActivity;
 
 /**
  * @author dieend
@@ -47,6 +47,7 @@ public class AddScriptCommand extends Command {
 		this.targetSprite = currentSprite;
 		this.scriptBrick = scriptBrick;
 		this.position = position;
+		this.message = ScriptActivity.ACTION_BRICK_LIST_CHANGED;
 	}
 
 	/*
@@ -65,7 +66,7 @@ public class AddScriptCommand extends Command {
 	 * @see org.catrobat.catroid.content.command.Command#execute()
 	 */
 	@Override
-	protected void execute() {
+	protected String execute() {
 		Sprite currentSprite = targetSprite;
 
 		int[] temp = getScriptAndBrickIndexFromProject(position);
@@ -91,6 +92,7 @@ public class AddScriptCommand extends Command {
 				newScript.addBrick(brick);
 			}
 		}
+		return message;
 	}
 
 	/*
@@ -99,22 +101,26 @@ public class AddScriptCommand extends Command {
 	 * @see org.catrobat.catroid.content.command.Command#unexecute()
 	 */
 	@Override
-	protected void unexecute() {
+	protected String unexecute() {
 		int temp[] = getScriptAndBrickIndexFromProject(position);
-		Script script = targetSprite.getScript(temp[0]);
+		int scriptPosition = temp[0];
+		Script script = targetSprite.getScript(scriptPosition + 1);
+		Script previousScript = targetSprite.getScript(scriptPosition);
 		if (script != null) {
-			Brick brick = script.getBrick(temp[1]);
-			if (brick instanceof NestingBrick) {
-				for (Brick tempBrick : ((NestingBrick) brick).getAllNestingBrickParts(true)) {
-					script.removeBrick(tempBrick);
-				}
-			} else {
-				script.removeBrick(brick);
-			}
-			//			if (removeScript) {
 			targetSprite.removeScript(script);
+			if (previousScript != null) {
+				Brick brick;
+				int size = script.getBrickList().size();
+				for (int i = 0; i < size; i++) {
+					brick = script.getBrick(0);
+					script.removeBrick(brick);
+					previousScript.addBrick(brick);
+				}
+			}
+			script = null;
 			//			}
 		}
+		return message;
 	}
 
 	private int[] getScriptAndBrickIndexFromProject(int position) {

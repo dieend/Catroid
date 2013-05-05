@@ -59,16 +59,16 @@ public class CommandManager {
 		return ret;
 	}
 
-	public void undo() {
+	public String undo() {
 		assert currentCommand > 0;
 		Command c = getTopStack();
-		c.unexecute();
+		return c.unexecute();
 	}
 
-	public void redo() {
+	public String redo() {
 		assert currentCommand + 1 < history.size();
 		currentCommand += 1;
-		history.get(currentCommand).execute();
+		return history.get(currentCommand).execute();
 	}
 
 	private void cleanExpiredCommand() {

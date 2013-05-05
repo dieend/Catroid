@@ -95,6 +95,10 @@ public class ProjectActivity extends SherlockFragmentActivity {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		handleShowDetails(spritesListFragment.getShowDetails(), menu.findItem(R.id.show_details));
+		menu.findItem(R.id.undo).setEnabled(
+				ProjectManager.getInstance().getCurrentProject().getCommandManager().isUndoable());
+		menu.findItem(R.id.redo).setEnabled(
+				ProjectManager.getInstance().getCurrentProject().getCommandManager().isRedoable());
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -151,14 +155,16 @@ public class ProjectActivity extends SherlockFragmentActivity {
 				break;
 			}
 			case R.id.undo: {
-				if (ProjectManager.getInstance().getCurrentProject().getCommandManager().isUndoable()) {
-					ProjectManager.getInstance().getCurrentProject().getCommandManager().undo();
+				String message = ProjectManager.getInstance().getCurrentProject().getCommandManager().undo();
+				if (message != null) {
+					sendBroadcast(new Intent(message));
 				}
 				break;
 			}
 			case R.id.redo: {
-				if (ProjectManager.getInstance().getCurrentProject().getCommandManager().isRedoable()) {
-					ProjectManager.getInstance().getCurrentProject().getCommandManager().redo();
+				String message = ProjectManager.getInstance().getCurrentProject().getCommandManager().redo();
+				if (message != null) {
+					sendBroadcast(new Intent(message));
 				}
 				break;
 			}

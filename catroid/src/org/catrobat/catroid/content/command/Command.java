@@ -34,6 +34,7 @@ public abstract class Command implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 3592870808261072238L;
+	protected String message = null;
 
 	protected abstract boolean isNeedMemento();
 
@@ -45,9 +46,9 @@ public abstract class Command implements Serializable {
 	protected void setMemento(Object o) {
 	}
 
-	protected abstract void execute();
+	protected abstract String execute();
 
-	protected abstract void unexecute();
+	protected abstract String unexecute();
 
 	protected void unexecute(Object memento) {
 		unexecute();

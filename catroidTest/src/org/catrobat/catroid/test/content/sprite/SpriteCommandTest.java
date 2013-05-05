@@ -9,7 +9,6 @@ import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.Script;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.content.StartScript;
-import org.catrobat.catroid.content.bricks.BroadcastReceiverBrick;
 import org.catrobat.catroid.content.bricks.ComeToFrontBrick;
 import org.catrobat.catroid.content.bricks.HideBrick;
 import org.catrobat.catroid.content.bricks.PlaceAtBrick;
@@ -17,6 +16,7 @@ import org.catrobat.catroid.content.bricks.ScriptBrick;
 import org.catrobat.catroid.content.bricks.SetLookBrick;
 import org.catrobat.catroid.content.bricks.SetSizeToBrick;
 import org.catrobat.catroid.content.bricks.ShowBrick;
+import org.catrobat.catroid.content.bricks.WhenStartedBrick;
 import org.catrobat.catroid.content.command.AddScriptCommand;
 import org.catrobat.catroid.content.command.CommandManager;
 import org.catrobat.catroid.io.StorageHandler;
@@ -45,26 +45,30 @@ public class SpriteCommandTest extends InstrumentationTestCase {
 		Sprite currentSprite = ProjectManager.getInstance().getCurrentProject().getSpriteList().get(1);
 		assertEquals("Script choosen not cat sprite", "cat", currentSprite.getName());
 		assertEquals("Number of existing script not 1", 1, currentSprite.getNumberOfScripts());
+		assertEquals("Number of existing brick not 4", 4, currentSprite.getNumberOfBricks());
 		Script testedScript = currentSprite.getScript(0);
 
-		int position = 0;
-		ScriptBrick scriptBrick = new BroadcastReceiverBrick();
+		int position = 2;
+		ScriptBrick scriptBrick = new WhenStartedBrick();
 		cm.executeCommand(new AddScriptCommand(currentSprite, scriptBrick, position));
 
 		assertEquals("Added new script command not working", 2, currentSprite.getNumberOfScripts());
-		Script addedScript = currentSprite.getScript(0);
+		Script addedScript = currentSprite.getScript(1);
 
 		assertNotSame("Added new script added in wrong position", addedScript, testedScript);
 
 		assertTrue("Not able to undo after executing command", cm.isUndoable());
 		cm.undo();
 		assertEquals("Undo adding new script command not working", 1, currentSprite.getNumberOfScripts());
-		assertEquals("Wrong undo action happened", testedScript, currentSprite.getScript(0));
+		assertEquals("Wrong undo action happened", testedScript.getBrickList().size(), currentSprite.getScript(0)
+				.getBrickList().size());
 
+		assertEquals("undo action deleting bricks", 4, currentSprite.getNumberOfBricks());
 		assertTrue("Not able to redo after undoing command", cm.isRedoable());
 		cm.redo();
 		assertEquals("Redo adding new script command not working", 2, currentSprite.getNumberOfScripts());
-		assertEquals("Wrong redo action happened", addedScript, currentSprite.getScript(0));
+		assertEquals("Redo action make new bricks", 4, currentSprite.getNumberOfBricks());
+		assertEquals("Wrong redo action happened", addedScript, currentSprite.getScript(1));
 
 	}
 
