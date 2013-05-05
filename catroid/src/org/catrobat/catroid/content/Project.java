@@ -50,7 +50,7 @@ public class Project implements Serializable {
 	private List<Sprite> spriteList = new ArrayList<Sprite>();
 	@XStreamAlias("variables")
 	private UserVariablesContainer userVariables = null;
-	private transient CommandManager commandManager;
+	private CommandManager commandManager;
 
 	public Project(Context context, String name) {
 		xmlHeader.setProgramName(name);

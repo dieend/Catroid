@@ -35,10 +35,7 @@ import org.catrobat.catroid.ui.ScriptActivity;
  * 
  */
 public class AddScriptCommand extends Command {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7395809028288105937L;
+	private static final long serialVersionUID = 1L;
 	private Sprite targetSprite;
 	private ScriptBrick scriptBrick;
 	private int position;

@@ -22,6 +22,7 @@
  */
 package org.catrobat.catroid.content.command;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,15 +30,13 @@ import java.util.List;
  * @author adinata
  * 
  */
-public class CommandManager {
+public class CommandManager implements Serializable {
 	private List<Command> history;
 	private int currentCommand;
-	private List<Object> memento;
 
 	public CommandManager() {
 		history = new ArrayList<Command>();
 		currentCommand = -1;
-		memento = new ArrayList<Object>();
 	}
 
 	public boolean isRedoable() {
@@ -76,11 +75,6 @@ public class CommandManager {
 	}
 
 	protected void storeCommand(Command c) {
-		if (c.isNeedMemento()) {
-			memento.add(c.getMemento());
-		} else {
-			memento.add(null);
-		}
 		currentCommand += 1;
 		history.add(currentCommand, c);
 		cleanExpiredCommand();

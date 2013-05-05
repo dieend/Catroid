@@ -29,11 +29,7 @@ import java.io.Serializable;
  * 
  */
 public abstract class Command implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3592870808261072238L;
+	private static final long serialVersionUID = 1L;
 	protected String message = null;
 
 	protected abstract boolean isNeedMemento();
