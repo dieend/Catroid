@@ -131,6 +131,9 @@ public class Project implements Serializable {
 	}
 
 	public CommandManager getCommandManager() {
+		if (commandManager == null) {
+			commandManager = new CommandManager();
+		}
 		return this.commandManager;
 	}
 

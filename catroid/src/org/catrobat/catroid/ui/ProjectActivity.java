@@ -150,6 +150,18 @@ public class ProjectActivity extends SherlockFragmentActivity {
 				startActivity(intent);
 				break;
 			}
+			case R.id.undo: {
+				if (ProjectManager.getInstance().getCurrentProject().getCommandManager().isUndoable()) {
+					ProjectManager.getInstance().getCurrentProject().getCommandManager().undo();
+				}
+				break;
+			}
+			case R.id.redo: {
+				if (ProjectManager.getInstance().getCurrentProject().getCommandManager().isRedoable()) {
+					ProjectManager.getInstance().getCurrentProject().getCommandManager().redo();
+				}
+				break;
+			}
 		}
 		return super.onOptionsItemSelected(item);
 	}

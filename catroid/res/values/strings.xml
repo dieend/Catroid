@@ -34,6 +34,8 @@
     <string name="cut">Cut</string>
     <string name="move">Move</string>
     <string name="play">Play</string>
+    <string name="undo">Undo</string>
+    <string name="redo">Redo</string>
     <!--  -->
 
 

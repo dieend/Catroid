@@ -49,10 +49,6 @@ public class AddScriptCommand extends Command {
 		this.position = position;
 	}
 
-	@Override
-	protected void setMemento(Object o) {
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -60,7 +56,7 @@ public class AddScriptCommand extends Command {
 	 */
 	@Override
 	protected boolean isNeedMemento() {
-		return true;
+		return false;
 	}
 
 	/*
