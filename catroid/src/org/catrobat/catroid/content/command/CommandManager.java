@@ -51,7 +51,6 @@ public class CommandManager {
 	public final void executeCommand(Command c) {
 		storeCommand(c);
 		c.execute();
-
 	}
 
 	private Command getTopStack() {
@@ -78,6 +77,7 @@ public class CommandManager {
 
 	protected void storeCommand(Command c) {
 		if (c.isNeedMemento()) {
+			memento.add(c.getMemento());
 		} else {
 			memento.add(null);
 		}

@@ -27,6 +27,7 @@ import java.util.List;
 import org.catrobat.catroid.content.Script;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.content.bricks.Brick;
+import org.catrobat.catroid.content.bricks.NestingBrick;
 import org.catrobat.catroid.content.bricks.ScriptBrick;
 
 /**
@@ -44,6 +45,10 @@ public class AddScriptCommand extends Command {
 		this.position = position;
 	}
 
+	@Override
+	protected void setMemento(Object o) {
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -51,7 +56,7 @@ public class AddScriptCommand extends Command {
 	 */
 	@Override
 	protected boolean isNeedMemento() {
-		return false;
+		return true;
 	}
 
 	/*
@@ -86,7 +91,6 @@ public class AddScriptCommand extends Command {
 				newScript.addBrick(brick);
 			}
 		}
-
 	}
 
 	/*
@@ -96,8 +100,21 @@ public class AddScriptCommand extends Command {
 	 */
 	@Override
 	protected void unexecute() {
-		// TODO Auto-generated method stub
-
+		int temp[] = getScriptAndBrickIndexFromProject(position);
+		Script script = targetSprite.getScript(temp[0]);
+		if (script != null) {
+			Brick brick = script.getBrick(temp[1]);
+			if (brick instanceof NestingBrick) {
+				for (Brick tempBrick : ((NestingBrick) brick).getAllNestingBrickParts(true)) {
+					script.removeBrick(tempBrick);
+				}
+			} else {
+				script.removeBrick(brick);
+			}
+			//			if (removeScript) {
+			targetSprite.removeScript(script);
+			//			}
+		}
 	}
 
 	private int[] getScriptAndBrickIndexFromProject(int position) {

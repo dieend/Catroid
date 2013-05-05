@@ -22,11 +22,18 @@
  */
 package org.catrobat.catroid.content.command;
 
+import java.io.Serializable;
+
 /**
  * @author adinata
  * 
  */
-public abstract class Command {
+public abstract class Command implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3592870808261072238L;
 
 	protected abstract boolean isNeedMemento();
 
@@ -36,7 +43,6 @@ public abstract class Command {
 	}
 
 	protected void setMemento(Object o) {
-
 	}
 
 	protected abstract void execute();
@@ -44,7 +50,6 @@ public abstract class Command {
 	protected abstract void unexecute();
 
 	protected void unexecute(Object memento) {
-		setMemento(memento);
 		unexecute();
 	}
 }
