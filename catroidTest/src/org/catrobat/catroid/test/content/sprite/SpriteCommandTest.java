@@ -38,7 +38,7 @@ public class SpriteCommandTest extends InstrumentationTestCase {
 		super.tearDown();
 	}
 
-	public void testAddCommandScript() throws IOException {
+	public void testAddScriptCommand() throws IOException {
 		createTestProject("project name");
 		CommandManager cm = ProjectManager.getInstance().getCurrentProject().getCommandManager();
 
